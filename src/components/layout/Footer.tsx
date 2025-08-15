@@ -2,12 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Mail, Phone, MessageCircle, Linkedin, Github } from "lucide-react";
 import { Link } from "react-router-dom";
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-
-  return (
-    <footer className="bg-muted/30 border-t border-border/40">
+  return <footer className="bg-muted/30 border-t border-border/40">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
@@ -66,26 +63,15 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="font-semibold text-foreground">Bog'lanish</h3>
             <div className="space-y-3">
-              <a 
-                href="mailto:akram@farmonov.uz" 
-                className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm"
-              >
+              <a href="mailto:akram@farmonov.uz" className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm">
                 <Mail className="h-4 w-4" />
                 <span>akram@farmonov.uz</span>
               </a>
-              <a 
-                href="tel:+998901234567" 
-                className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm"
-              >
+              <a href="tel:+998901234567" className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm">
                 <Phone className="h-4 w-4" />
-                <span>+998 90 123 45 67</span>
+                <span>+998 99 644 84 44</span>
               </a>
-              <a 
-                href="https://t.me/akramfarmonov" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm"
-              >
+              <a href="https://t.me/akramfarmonov" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm">
                 <MessageCircle className="h-4 w-4" />
                 <span>@akramfarmonov</span>
               </a>
@@ -123,6 +109,5 @@ export default function Footer() {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 }
