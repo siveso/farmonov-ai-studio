@@ -32,6 +32,9 @@ const authLimiter = rateLimit({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Trust proxy for rate limiting in Replit environment
+  app.set('trust proxy', 1);
+
   // Security middleware
   app.use(helmet({
     contentSecurityPolicy: {
@@ -554,6 +557,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.send(sitemap);
     } catch (error) {
       res.status(500).json({ error: "Failed to generate sitemap" });
+    }
+  });
+
+  // Blog generation endpoint
+  app.post("/api/admin/generate-posts", requireAuth, async (req, res) => {
+    try {
+      const { count = 3 } = req.body;
+      
+      // Import and use Gemini blog generator
+      const { GeminiBlogGenerator } = await import("./gemini");
+      const blogGenerator = new GeminiBlogGenerator();
+      
+      const generatedPosts = [];
+      for (let i = 0; i < count; i++) {
+        try {
+          const post = await blogGenerator.generateBlogPost();
+          const savedPost = await storage.createPost(post);
+          generatedPosts.push(savedPost);
+        } catch (error) {
+          console.error(`Failed to generate post ${i + 1}:`, error);
+        }
+      }
+      
+      res.json({ 
+        message: `${generatedPosts.length} maqola muvaffaqiyatli yaratildi`,
+        posts: generatedPosts
+      });
+    } catch (error) {
+      console.error("Blog generation error:", error);
+      res.status(500).json({ error: "Blog maqolalarini yaratishda xatolik yuz berdi" });
     }
   });
 

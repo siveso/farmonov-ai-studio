@@ -134,7 +134,17 @@ export class MemStorage implements IStorage {
         ...service,
         id: this.currentId++,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        technologies: service.technologies || null,
+        features: service.features || null,
+        subtitle: service.subtitle || null,
+        pricing: service.pricing || null,
+        timeline: service.timeline || null,
+        icon: service.icon || null,
+        color: service.color || null,
+        popular: service.popular || null,
+        active: service.active || null,
+        order: service.order || null
       };
       this.services.set(newService.id, newService);
     });
@@ -153,6 +163,7 @@ export class MemStorage implements IStorage {
     const user: User = {
       ...insertUser,
       id: this.currentId++,
+      role: insertUser.role || "user",
       createdAt: new Date()
     };
     this.users.set(user.id, user);
@@ -197,7 +208,15 @@ export class MemStorage implements IStorage {
       views: 0,
       likes: 0,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      excerpt: insertPost.excerpt || null,
+      tags: insertPost.tags || null,
+      featuredImage: insertPost.featuredImage || null,
+      published: insertPost.published || null,
+      publishedAt: insertPost.publishedAt || null,
+      readTime: insertPost.readTime || null,
+      seoTitle: insertPost.seoTitle || null,
+      seoDescription: insertPost.seoDescription || null
     };
     this.posts.set(post.id, post);
     return post;
@@ -258,7 +277,22 @@ export class MemStorage implements IStorage {
       ...insertProject,
       id: this.currentId++,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      shortDescription: insertProject.shortDescription || null,
+      technologies: insertProject.technologies || null,
+      features: insertProject.features || null,
+      results: insertProject.results || null,
+      images: insertProject.images || null,
+      client: insertProject.client || null,
+      year: insertProject.year || null,
+      duration: insertProject.duration || null,
+      featured: insertProject.featured || null,
+      liveUrl: insertProject.liveUrl || null,
+      caseStudyUrl: insertProject.caseStudyUrl || null,
+      githubUrl: insertProject.githubUrl || null,
+      telegramUrl: insertProject.telegramUrl || null,
+      testimonial: insertProject.testimonial || null,
+      published: insertProject.published || null
     };
     this.projects.set(project.id, project);
     return project;
@@ -301,7 +335,17 @@ export class MemStorage implements IStorage {
       ...insertService,
       id: this.currentId++,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      subtitle: insertService.subtitle || null,
+      features: insertService.features || null,
+      pricing: insertService.pricing || null,
+      timeline: insertService.timeline || null,
+      technologies: insertService.technologies || null,
+      icon: insertService.icon || null,
+      color: insertService.color || null,
+      popular: insertService.popular || null,
+      active: insertService.active || null,
+      order: insertService.order || null
     };
     this.services.set(service.id, service);
     return service;
@@ -355,7 +399,18 @@ export class MemStorage implements IStorage {
       status: "new",
       priority: "medium",
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      email: insertLead.email || null,
+      phone: insertLead.phone || null,
+      businessType: insertLead.businessType || null,
+      serviceType: insertLead.serviceType || null,
+      budget: insertLead.budget || null,
+      timeline: insertLead.timeline || null,
+      message: insertLead.message || null,
+      source: insertLead.source || null,
+      notes: insertLead.notes || null,
+      followUpDate: insertLead.followUpDate || null,
+      convertedAt: insertLead.convertedAt || null
     };
     this.leads.set(lead.id, lead);
     return lead;
@@ -383,7 +438,12 @@ export class MemStorage implements IStorage {
     const analytics: Analytics = {
       ...insertAnalytics,
       id: this.currentId++,
-      timestamp: new Date()
+      timestamp: new Date(),
+      userAgent: insertAnalytics.userAgent || null,
+      referer: insertAnalytics.referer || null,
+      ip: insertAnalytics.ip || null,
+      country: insertAnalytics.country || null,
+      device: insertAnalytics.device || null
     };
     this.analytics.set(analytics.id, analytics);
     return analytics;
