@@ -146,13 +146,13 @@ const Admin = () => {
   });
 
   // Fetch posts
-  const { data: posts = [], isLoading: postsLoading } = useQuery({
+  const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
     queryKey: ['/api/admin/posts'],
     enabled: isAuthenticated
   });
 
   // Fetch leads
-  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+  const { data: leads = [], isLoading: leadsLoading } = useQuery<Lead[]>({
     queryKey: ['/api/admin/leads'],
     enabled: isAuthenticated
   });
@@ -415,7 +415,7 @@ const Admin = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-muted-foregreen">Yangi mijozlar</p>
+                      <p className="text-sm text-muted-foreground">Yangi mijozlar</p>
                       <p className="text-2xl font-bold">
                         {leads.filter(lead => lead.status === 'new').length}
                       </p>
