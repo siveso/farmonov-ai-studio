@@ -10,6 +10,8 @@ import Portfolio from "./pages/Portfolio";
 import Blog from "./pages/Blog";
 import Haqida from "./pages/Haqida";
 import Aloqa from "./pages/Aloqa";
+import CaseStudies from "./pages/CaseStudies";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
