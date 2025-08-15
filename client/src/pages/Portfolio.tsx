@@ -16,7 +16,7 @@ import {
   Bot,
   Zap
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "wouter";
 import { Helmet } from "react-helmet-async";
 
 const projects = [
