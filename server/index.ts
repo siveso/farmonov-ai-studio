@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { scheduler } from "./scheduler";
 
 const app = express();
 app.use(express.json());
@@ -66,5 +67,16 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // Initialize blog scheduler and sample content
+    setTimeout(async () => {
+      try {
+        await scheduler.initializeSampleContent();
+        scheduler.startScheduler();
+        log("Blog scheduler initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize blog scheduler:", error);
+      }
+    }, 5000); // Start after 5 seconds to ensure server is ready
   });
 })();

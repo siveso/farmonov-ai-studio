@@ -39,27 +39,46 @@ export default function Aloqa() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast({
+          title: "Muvaffaqiyatli yuborildi!",
+          description: result.message || "Rahmat! 24 soat ichida aloqaga chiqamiz.",
+        });
+        
+        // Reset form
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          businessType: "",
+          serviceType: "",
+          budget: "",
+          message: "",
+          timeline: ""
+        });
+      } else {
+        throw new Error(result.error || "Xatolik yuz berdi");
+      }
+    } catch (error) {
       toast({
-        title: "Muvaffaqiyatli yuborildi!",
-        description: "Rahmat! 1 ish kuni ichida aloqaga chiqamiz.",
+        title: "Xatolik yuz berdi",
+        description: error instanceof Error ? error.message : "Iltimos qaytadan urinib ko'ring",
+        variant: "destructive"
       });
-      
-      // Reset form
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        businessType: "",
-        serviceType: "",
-        budget: "",
-        message: "",
-        timeline: ""
-      });
-      
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const handleInputChange = (name: string, value: string) => {
