@@ -7,6 +7,8 @@ import {
   type Lead, type InsertLead,
   type Analytics, type InsertAnalytics
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, like, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -609,4 +611,275 @@ Telegram bot - bu biznesingizni avtomatlashtirish va mijozlar bilan samarali mul
   }
 }
 
-export const storage = new MemStorage();
+// DatabaseStorage implementation
+export class DatabaseStorage implements IStorage {
+  
+  // User operations
+  async getUser(id: number): Promise<User | undefined> {
+    if (!db) return undefined;
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    if (!db) return undefined;
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    if (!db) throw new Error("Database not available");
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  // Post operations
+  async getPosts(filters?: { published?: boolean; category?: string; limit?: number; offset?: number }): Promise<Post[]> {
+    const query = db.select().from(posts);
+    
+    let whereConditions = [];
+    if (filters?.published !== undefined) {
+      whereConditions.push(eq(posts.published, filters.published));
+    }
+    if (filters?.category) {
+      whereConditions.push(eq(posts.category, filters.category));
+    }
+
+    const finalQuery = whereConditions.length > 0 
+      ? query.where(and(...whereConditions))
+      : query;
+
+    const result = await finalQuery
+      .orderBy(desc(posts.publishedAt), desc(posts.createdAt))
+      .limit(filters?.limit || 50)
+      .offset(filters?.offset || 0);
+
+    return result;
+  }
+
+  async getPost(id: number): Promise<Post | undefined> {
+    const [post] = await db.select().from(posts).where(eq(posts.id, id));
+    return post || undefined;
+  }
+
+  async getPostBySlug(slug: string): Promise<Post | undefined> {
+    const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
+    return post || undefined;
+  }
+
+  async createPost(insertPost: InsertPost): Promise<Post> {
+    const [post] = await db
+      .insert(posts)
+      .values(insertPost)
+      .returning();
+    return post;
+  }
+
+  async updatePost(id: number, updateData: Partial<InsertPost>): Promise<Post | undefined> {
+    const [post] = await db
+      .update(posts)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(posts.id, id))
+      .returning();
+    return post || undefined;
+  }
+
+  async deletePost(id: number): Promise<boolean> {
+    const result = await db.delete(posts).where(eq(posts.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  async incrementPostViews(id: number): Promise<void> {
+    await db
+      .update(posts)
+      .set({ 
+        views: sql`${posts.views} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(posts.id, id));
+  }
+
+  // Project operations
+  async getProjects(filters?: { published?: boolean; category?: string; featured?: boolean }): Promise<Project[]> {
+    const query = db.select().from(projects);
+    
+    let whereConditions = [];
+    if (filters?.published !== undefined) {
+      whereConditions.push(eq(projects.published, filters.published));
+    }
+    if (filters?.category) {
+      whereConditions.push(eq(projects.category, filters.category));
+    }
+    if (filters?.featured !== undefined) {
+      whereConditions.push(eq(projects.featured, filters.featured));
+    }
+
+    const finalQuery = whereConditions.length > 0 
+      ? query.where(and(...whereConditions))
+      : query;
+
+    return await finalQuery.orderBy(desc(projects.createdAt));
+  }
+
+  async getProject(id: number): Promise<Project | undefined> {
+    const [project] = await db.select().from(projects).where(eq(projects.id, id));
+    return project || undefined;
+  }
+
+  async getProjectBySlug(slug: string): Promise<Project | undefined> {
+    const [project] = await db.select().from(projects).where(eq(projects.slug, slug));
+    return project || undefined;
+  }
+
+  async createProject(insertProject: InsertProject): Promise<Project> {
+    const [project] = await db
+      .insert(projects)
+      .values(insertProject)
+      .returning();
+    return project;
+  }
+
+  async updateProject(id: number, updateData: Partial<InsertProject>): Promise<Project | undefined> {
+    const [project] = await db
+      .update(projects)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(projects.id, id))
+      .returning();
+    return project || undefined;
+  }
+
+  async deleteProject(id: number): Promise<boolean> {
+    const result = await db.delete(projects).where(eq(projects.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Service operations
+  async getServices(filters?: { active?: boolean }): Promise<Service[]> {
+    const query = db.select().from(services);
+    
+    const finalQuery = filters?.active !== undefined 
+      ? query.where(eq(services.active, filters.active))
+      : query;
+
+    return await finalQuery.orderBy(services.order, services.id);
+  }
+
+  async getService(id: number): Promise<Service | undefined> {
+    const [service] = await db.select().from(services).where(eq(services.id, id));
+    return service || undefined;
+  }
+
+  async createService(insertService: InsertService): Promise<Service> {
+    const [service] = await db
+      .insert(services)
+      .values(insertService)
+      .returning();
+    return service;
+  }
+
+  async updateService(id: number, updateData: Partial<InsertService>): Promise<Service | undefined> {
+    const [service] = await db
+      .update(services)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(services.id, id))
+      .returning();
+    return service || undefined;
+  }
+
+  async deleteService(id: number): Promise<boolean> {
+    const result = await db.delete(services).where(eq(services.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Lead operations
+  async getLeads(filters?: { status?: string; priority?: string; limit?: number }): Promise<Lead[]> {
+    const query = db.select().from(leads);
+    
+    let whereConditions = [];
+    if (filters?.status) {
+      whereConditions.push(eq(leads.status, filters.status));
+    }
+    if (filters?.priority) {
+      whereConditions.push(eq(leads.priority, filters.priority));
+    }
+
+    const finalQuery = whereConditions.length > 0 
+      ? query.where(and(...whereConditions))
+      : query;
+
+    return await finalQuery
+      .orderBy(desc(leads.createdAt))
+      .limit(filters?.limit || 50);
+  }
+
+  async getLead(id: number): Promise<Lead | undefined> {
+    const [lead] = await db.select().from(leads).where(eq(leads.id, id));
+    return lead || undefined;
+  }
+
+  async createLead(insertLead: InsertLead): Promise<Lead> {
+    const [lead] = await db
+      .insert(leads)
+      .values({
+        ...insertLead,
+        status: "new",
+        priority: "medium"
+      })
+      .returning();
+    return lead;
+  }
+
+  async updateLead(id: number, updateData: Partial<InsertLead>): Promise<Lead | undefined> {
+    const [lead] = await db
+      .update(leads)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(leads.id, id))
+      .returning();
+    return lead || undefined;
+  }
+
+  async deleteLead(id: number): Promise<boolean> {
+    const result = await db.delete(leads).where(eq(leads.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
+  // Analytics operations
+  async createAnalytics(insertAnalytics: InsertAnalytics): Promise<Analytics> {
+    const [analyticsRow] = await db
+      .insert(analytics)
+      .values(insertAnalytics)
+      .returning();
+    return analyticsRow;
+  }
+
+  async getAnalytics(filters?: { path?: string; limit?: number; dateFrom?: Date; dateTo?: Date }): Promise<Analytics[]> {
+    const query = db.select().from(analytics);
+    
+    let whereConditions = [];
+    if (filters?.path) {
+      whereConditions.push(eq(analytics.path, filters.path));
+    }
+    if (filters?.dateFrom) {
+      whereConditions.push(sql`${analytics.timestamp} >= ${filters.dateFrom}`);
+    }
+    if (filters?.dateTo) {
+      whereConditions.push(sql`${analytics.timestamp} <= ${filters.dateTo}`);
+    }
+
+    const finalQuery = whereConditions.length > 0 
+      ? query.where(and(...whereConditions))
+      : query;
+
+    return await finalQuery
+      .orderBy(desc(analytics.timestamp))
+      .limit(filters?.limit || 100);
+  }
+}
+
+// Use DatabaseStorage if DATABASE_URL is available, otherwise fallback to MemStorage
+export const storage = process.env.DATABASE_URL && process.env.DATABASE_URL !== "postgresql://user:pass@localhost:5432/portfolio"
+  ? new DatabaseStorage() 
+  : new MemStorage();
