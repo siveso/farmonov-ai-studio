@@ -85,4 +85,10 @@ app.use((req, res, next) => {
       try {
         await scheduler.initializeSampleContent();
         scheduler.startScheduler();
-        log("Blog scheduler
+        log("Blog scheduler initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize blog scheduler:", error);
+      }
+    }, 5000);
+  });
+})();
