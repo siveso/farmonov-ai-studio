@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Router, Route, Switch } from "wouter";
 import { HelmetProvider } from "react-helmet-async";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { queryClient } from "@/lib/queryClient";
 import Index from "./pages/Index";
 import Xizmatlar from "./pages/Xizmatlar";
@@ -17,25 +18,27 @@ import NotFound from "./pages/NotFound";
 
 const App = () => (
   <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <Sonner />
-      <Router>
-        <Switch>
-          <Route path="/" component={Index} />
-          <Route path="/xizmatlar" component={Xizmatlar} />
-          <Route path="/portfolio" component={Portfolio} />
-          <Route path="/blog" component={Blog} />
-          <Route path="/blog/:slug" component={Blog} />
-          <Route path="/haqida" component={Haqida} />
-          <Route path="/aloqa" component={Aloqa} />
-          <Route path="/case-studies/:slug?" component={CaseStudies} />
-          <Route path="/faq" component={FAQ} />
-          <Route path="/admin" component={Admin} />
-          <Route component={NotFound} />
-        </Switch>
-      </Router>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="light" storageKey="akram-theme">
+      <QueryClientProvider client={queryClient}>
+        <Toaster />
+        <Sonner />
+        <Router>
+          <Switch>
+            <Route path="/" component={Index} />
+            <Route path="/xizmatlar" component={Xizmatlar} />
+            <Route path="/portfolio" component={Portfolio} />
+            <Route path="/blog" component={Blog} />
+            <Route path="/blog/:slug" component={Blog} />
+            <Route path="/haqida" component={Haqida} />
+            <Route path="/aloqa" component={Aloqa} />
+            <Route path="/case-studies/:slug?" component={CaseStudies} />
+            <Route path="/faq" component={FAQ} />
+            <Route path="/admin" component={Admin} />
+            <Route component={NotFound} />
+          </Switch>
+        </Router>
+      </QueryClientProvider>
+    </ThemeProvider>
   </HelmetProvider>
 );
 
