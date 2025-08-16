@@ -123,6 +123,27 @@ const popularTags = [
   "ecommerce", "nextjs", "react", "business", "optimization"
 ];
 
+interface BlogPost {
+  id: number;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt?: string;
+  readTime: number;
+  category: string;
+  tags: string[];
+  featured?: boolean;
+  views?: number;
+  likes?: number;
+  slug: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  featuredImage?: string;
+}
+
 export default function Blog() {
   const params = useParams();
   const { slug } = params;
@@ -133,12 +154,15 @@ export default function Blog() {
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
 
+  // Fetch individual post if slug is provided
+  const { data: post, isLoading: postLoading } = useQuery<BlogPost>({
+    queryKey: [`/api/posts/${slug}`],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    enabled: !!slug // Only fetch when slug exists
+  });
+
   // If slug is provided, show individual post
   if (slug) {
-    const { data: post, isLoading: postLoading } = useQuery({
-      queryKey: [`/api/posts/${slug}`],
-      staleTime: 10 * 60 * 1000 // 10 minutes
-    });
 
     if (postLoading) {
       return (
@@ -242,7 +266,7 @@ export default function Blog() {
                 {/* Article Content */}
                 <div className="prose prose-lg max-w-none dark:prose-invert">
                   <div className="whitespace-pre-line leading-relaxed">
-                    {post.content.split('\n').map((line, index) => {
+                    {post.content.split('\n').map((line: string, index: number) => {
                       // Handle headers
                       if (line.startsWith('# ')) {
                         return <h1 key={index} className="text-3xl font-bold mt-8 mb-4">{line.substring(2)}</h1>;
@@ -266,7 +290,7 @@ export default function Blog() {
                         const parts = line.split('**');
                         return (
                           <p key={index} className="mb-3">
-                            {parts.map((part, i) => 
+                            {parts.map((part: string, i: number) => 
                               i % 2 === 1 ? <strong key={i}>{part}</strong> : part
                             )}
                           </p>
@@ -314,8 +338,9 @@ export default function Blog() {
   }
 
   // Show blog listing page
-  const featuredPosts = posts.filter((post: any) => post.featured).slice(0, 3);
-  const recentPosts = posts.slice(0, 6);
+  const typedPosts = posts as BlogPost[];
+  const featuredPosts = typedPosts.filter((post: BlogPost) => post.featured).slice(0, 3);
+  const recentPosts = typedPosts.slice(0, 6);
 
   return (
     <>
@@ -339,7 +364,7 @@ export default function Blog() {
               "@type": "Person",
               "name": "Akram Farmonov"
             },
-            "blogPost": featuredPosts.map(post => ({
+            "blogPost": featuredPosts.map((post: BlogPost) => ({
               "@type": "BlogPosting",
               "headline": post.title,
               "description": post.excerpt,
@@ -404,7 +429,7 @@ export default function Blog() {
               </h2>
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {featuredPosts.map((post) => {
+                {featuredPosts.map((post: BlogPost) => {
                   const categoryIcon = {
                     "E-commerce": Globe,
                     "Telegram": Bot,
@@ -443,7 +468,7 @@ export default function Blog() {
                       <CardContent className="pt-0 space-y-4">
                         {/* Tags */}
                         <div className="flex flex-wrap gap-1">
-                          {post.tags.slice(0, 3).map((tag) => (
+                          {post.tags.slice(0, 3).map((tag: string) => (
                             <Badge key={tag} variant="outline" className="text-xs">
                               #{tag}
                             </Badge>
@@ -549,7 +574,7 @@ export default function Blog() {
               {/* Posts Grid */}
               <div className="lg:col-span-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {recentPosts.map((post) => {
+                  {recentPosts.map((post: BlogPost) => {
                     const categoryIcon = {
                       "E-commerce": Globe,
                       "Telegram": Bot,
