@@ -232,6 +232,77 @@ export async function registerRoutes(app: Application) {
     }
   });
 
+  // Chatbot endpoint
+  app.post("/api/chat", async (req: Request, res: Response) => {
+    try {
+      const { message, history = [] } = req.body;
+      
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      // Create conversation context
+      const context = `Sen Akram Farmonov'ning professional web developer va AI consultant sifatida ishlaydigan virtual yordamchisissan. Akram Farmonov Toshkent, O'zbekistonda yashaydigan tajribali web developer bo'lib, quyidagi xizmatlar bilan shug'ullanadi:
+
+1. Web saytlar yaratish (React, Node.js, TypeScript)
+2. Telegram botlar yaratish
+3. AI chatbotlar va avtomatlashtirish
+4. E-commerce yechimlari
+5. Business process avtomatlashtirish
+
+Sening vazifang:
+- Mijozlarni Akram bilan bog'lash
+- Uning xizmatlar haqida ma'lumot berish  
+- Texnik savollarга yordam berish
+- Loyiha takliflarini qabul qilish
+- Do'stona va professional munosabat
+
+Har doim o'zbek tilida javob ber va Akram'ning professional faoliyatiga oid savollarni javobla.`;
+
+      const conversationHistory = history.map((msg: any) => 
+        `${msg.role === 'user' ? 'Foydalanuvchi' : 'Yordamchi'}: ${msg.content}`
+      ).join('\n');
+
+      const fullPrompt = `${context}
+
+Oldingi suhbat:
+${conversationHistory}
+
+Foydalanuvchi: ${message}
+
+Yordamchi:`;
+
+      // Create a new AI instance for chatbot
+      const ai = new (await import("@google/genai")).GoogleGenAI({ 
+        apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "" 
+      });
+
+      const response = await ai.models.generateContent({
+        model: "gemini-1.5-flash",
+        contents: fullPrompt,
+        config: {
+          temperature: 0.7,
+          maxOutputTokens: 500,
+        }
+      });
+
+      const botResponse = response.text || "Kechirasiz, javob berishda muammo yuz berdi.";
+
+      res.json({ 
+        success: true, 
+        response: botResponse.trim(),
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error("Error in chatbot:", error);
+      res.status(500).json({ 
+        error: "Chatbot xizmatida muammo yuz berdi",
+        fallback: "Salom! Men Akram Farmonov'ning virtual yordamchisiman. Afsuski, hozir texnik muammo tufayli to'liq javob bera olmayapman. Iltimos, to'g'ridan-to'g'ri Akram bilan bog'laning: +998 91 123 45 67"
+      });
+    }
+  });
+
   // Create HTTP server
   const server = createServer(app);
   
