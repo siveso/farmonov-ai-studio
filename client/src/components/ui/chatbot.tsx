@@ -111,7 +111,7 @@ export function Chatbot({ className }: ChatbotProps) {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 h-14 w-14 rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg transition-all duration-300 hover:scale-110 z-50 ${className}`}
+        className={`fixed bottom-20 right-6 h-14 w-14 rounded-full bg-primary hover:bg-primary/90 text-white shadow-lg transition-all duration-300 hover:scale-110 z-50 ${className}`}
         data-testid="chatbot-toggle"
       >
         <MessageCircle className="h-6 w-6" />
@@ -121,7 +121,7 @@ export function Chatbot({ className }: ChatbotProps) {
 
   return (
     <Card 
-      className={`fixed bottom-6 right-6 w-80 h-96 shadow-xl border-0 bg-white dark:bg-gray-900 z-50 transition-all duration-300 ${
+      className={`fixed bottom-20 right-6 w-80 h-96 shadow-xl border-0 bg-white dark:bg-gray-900 z-50 transition-all duration-300 ${
         isMinimized ? 'h-14' : 'h-96'
       } ${className}`}
       data-testid="chatbot-window"
