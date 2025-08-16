@@ -3,7 +3,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { registerRoutes } from "./routes/index.js"; // IMPORTGA E'TIBOR BERING
+import { registerRoutes } from ".index.js"; // IMPORTGA E'TIBOR BERING
 import { setupVite, log } from "./vite.js";
 import { scheduler } from "./scheduler.js";
 
