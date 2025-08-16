@@ -638,6 +638,7 @@ export class DatabaseStorage implements IStorage {
 
   // Post operations
   async getPosts(filters?: { published?: boolean; category?: string; limit?: number; offset?: number }): Promise<Post[]> {
+    if (!db) return [];
     const query = db.select().from(posts);
     
     let whereConditions = [];
@@ -661,16 +662,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPost(id: number): Promise<Post | undefined> {
+    if (!db) return undefined;
     const [post] = await db.select().from(posts).where(eq(posts.id, id));
     return post || undefined;
   }
 
   async getPostBySlug(slug: string): Promise<Post | undefined> {
+    if (!db) return undefined;
     const [post] = await db.select().from(posts).where(eq(posts.slug, slug));
     return post || undefined;
   }
 
   async createPost(insertPost: InsertPost): Promise<Post> {
+    if (!db) throw new Error("Database not available");
     const [post] = await db
       .insert(posts)
       .values(insertPost)
@@ -679,6 +683,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePost(id: number, updateData: Partial<InsertPost>): Promise<Post | undefined> {
+    if (!db) return undefined;
     const [post] = await db
       .update(posts)
       .set({ ...updateData, updatedAt: new Date() })
@@ -688,11 +693,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deletePost(id: number): Promise<boolean> {
+    if (!db) return false;
     const result = await db.delete(posts).where(eq(posts.id, id));
     return (result.rowCount || 0) > 0;
   }
 
   async incrementPostViews(id: number): Promise<void> {
+    if (!db) return;
     await db
       .update(posts)
       .set({ 
@@ -704,6 +711,7 @@ export class DatabaseStorage implements IStorage {
 
   // Project operations
   async getProjects(filters?: { published?: boolean; category?: string; featured?: boolean }): Promise<Project[]> {
+    if (!db) return [];
     const query = db.select().from(projects);
     
     let whereConditions = [];
@@ -725,16 +733,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProject(id: number): Promise<Project | undefined> {
+    if (!db) return undefined;
     const [project] = await db.select().from(projects).where(eq(projects.id, id));
     return project || undefined;
   }
 
   async getProjectBySlug(slug: string): Promise<Project | undefined> {
+    if (!db) return undefined;
     const [project] = await db.select().from(projects).where(eq(projects.slug, slug));
     return project || undefined;
   }
 
   async createProject(insertProject: InsertProject): Promise<Project> {
+    if (!db) throw new Error("Database not available");
     const [project] = await db
       .insert(projects)
       .values(insertProject)
@@ -743,6 +754,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateProject(id: number, updateData: Partial<InsertProject>): Promise<Project | undefined> {
+    if (!db) return undefined;
     const [project] = await db
       .update(projects)
       .set({ ...updateData, updatedAt: new Date() })
@@ -752,12 +764,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProject(id: number): Promise<boolean> {
+    if (!db) return false;
     const result = await db.delete(projects).where(eq(projects.id, id));
     return (result.rowCount || 0) > 0;
   }
 
   // Service operations
   async getServices(filters?: { active?: boolean }): Promise<Service[]> {
+    if (!db) return [];
     const query = db.select().from(services);
     
     const finalQuery = filters?.active !== undefined 
@@ -768,11 +782,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getService(id: number): Promise<Service | undefined> {
+    if (!db) return undefined;
     const [service] = await db.select().from(services).where(eq(services.id, id));
     return service || undefined;
   }
 
   async createService(insertService: InsertService): Promise<Service> {
+    if (!db) throw new Error("Database not available");
     const [service] = await db
       .insert(services)
       .values(insertService)
@@ -781,6 +797,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateService(id: number, updateData: Partial<InsertService>): Promise<Service | undefined> {
+    if (!db) return undefined;
     const [service] = await db
       .update(services)
       .set({ ...updateData, updatedAt: new Date() })
@@ -790,12 +807,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteService(id: number): Promise<boolean> {
+    if (!db) return false;
     const result = await db.delete(services).where(eq(services.id, id));
     return (result.rowCount || 0) > 0;
   }
 
   // Lead operations
   async getLeads(filters?: { status?: string; priority?: string; limit?: number }): Promise<Lead[]> {
+    if (!db) return [];
     const query = db.select().from(leads);
     
     let whereConditions = [];
@@ -816,11 +835,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLead(id: number): Promise<Lead | undefined> {
+    if (!db) return undefined;
     const [lead] = await db.select().from(leads).where(eq(leads.id, id));
     return lead || undefined;
   }
 
   async createLead(insertLead: InsertLead): Promise<Lead> {
+    if (!db) throw new Error("Database not available");
     const [lead] = await db
       .insert(leads)
       .values({
@@ -833,6 +854,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateLead(id: number, updateData: Partial<InsertLead>): Promise<Lead | undefined> {
+    if (!db) return undefined;
     const [lead] = await db
       .update(leads)
       .set({ ...updateData, updatedAt: new Date() })
@@ -842,12 +864,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteLead(id: number): Promise<boolean> {
+    if (!db) return false;
     const result = await db.delete(leads).where(eq(leads.id, id));
     return (result.rowCount || 0) > 0;
   }
 
   // Analytics operations
   async createAnalytics(insertAnalytics: InsertAnalytics): Promise<Analytics> {
+    if (!db) throw new Error("Database not available");
     const [analyticsRow] = await db
       .insert(analytics)
       .values(insertAnalytics)
@@ -856,6 +880,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAnalytics(filters?: { path?: string; limit?: number; dateFrom?: Date; dateTo?: Date }): Promise<Analytics[]> {
+    if (!db) return [];
     const query = db.select().from(analytics);
     
     let whereConditions = [];
