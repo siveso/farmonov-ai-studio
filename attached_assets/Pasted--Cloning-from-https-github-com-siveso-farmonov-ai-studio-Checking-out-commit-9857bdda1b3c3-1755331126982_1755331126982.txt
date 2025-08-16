@@ -1,0 +1,66 @@
+==> Cloning from https://github.com/siveso/farmonov-ai-studio
+==> Checking out commit 9857bdda1b3c3d6270487e49a2c79d2850d55bb9 in branch main
+==> Downloading cache...
+==> Transferred 257MB in 7s. Extraction took 5s.
+==> Installing dependencies with npm...
+==> Using Node.js version 22.16.0 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+up to date, audited 777 packages in 2s
+199 packages are looking for funding
+  run `npm fund` for details
+10 vulnerabilities (3 low, 7 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+up to date, audited 777 packages in 1s
+199 packages are looking for funding
+  run `npm fund` for details
+10 vulnerabilities (3 low, 7 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+==> Running build command 'npm install; npm run build'...
+up to date, audited 777 packages in 1s
+199 packages are looking for funding
+  run `npm fund` for details
+10 vulnerabilities (3 low, 7 moderate)
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+Run `npm audit` for details.
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+vite v5.4.14 building for production...
+transforming...
+Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+✓ 1758 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                   0.63 kB │ gzip:   0.38 kB
+../dist/public/assets/index-CQ6Y2K06.css   93.94 kB │ gzip:  14.86 kB
+../dist/public/assets/index-BkircdvX.js   976.69 kB │ gzip: 253.88 kB
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 4.59s
+▲ [WARNING] Import "registerRoutes" will always be undefined because the file "server/routes.ts" has no exports [import-is-undefined]
+    server/routes.ts:4:9:
+      4 │ import { registerRoutes } from "./routes";
+        ╵          ~~~~~~~~~~~~~~
+▲ [WARNING] Import "registerRoutes" will always be undefined because the file "server/routes.ts" has no exports [import-is-undefined]
+    server/index.ts:4:9:
+      4 │ import { registerRoutes } from "./routes";
+        ╵          ~~~~~~~~~~~~~~
+2 warnings
+  dist/index.js  51.8kb
+⚡ Done in 8ms
+==> Uploading build...
+==> Your site is live 🎉
