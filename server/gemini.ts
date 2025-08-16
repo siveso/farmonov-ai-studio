@@ -3,7 +3,7 @@ import { storage } from "./storage";
 import type { InsertPost } from "@shared/schema";
 import { format } from "date-fns";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY || "" });
 
 interface BlogPostIdea {
   title: string;

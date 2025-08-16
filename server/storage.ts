@@ -205,6 +205,7 @@ export class MemStorage implements IStorage {
     const post: Post = {
       ...insertPost,
       id: this.currentId++,
+      author: insertPost.author || "Akram Farmonov",
       views: 0,
       likes: 0,
       createdAt: new Date(),

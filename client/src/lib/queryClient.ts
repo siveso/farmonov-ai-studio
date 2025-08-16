@@ -4,9 +4,10 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: async ({ queryKey }) => {
+        const token = localStorage.getItem('adminToken');
         const response = await fetch(`${queryKey[0]}`, {
           headers: {
-            'Authorization': localStorage.getItem('adminToken') || ''
+            'Authorization': token ? `Bearer ${token}` : ''
           }
         });
 
@@ -24,11 +25,12 @@ const queryClient = new QueryClient({
 
 // API request helper for mutations
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
+  const token = localStorage.getItem('adminToken');
   const response = await fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': localStorage.getItem('adminToken') || '',
+      'Authorization': token ? `Bearer ${token}` : '',
       ...options.headers,
     },
   });
