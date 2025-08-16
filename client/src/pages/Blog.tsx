@@ -17,8 +17,9 @@ import {
   Globe,
   Tag
 } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useParams } from "wouter";
 import { Helmet } from "react-helmet-async";
+import { useQuery } from "@tanstack/react-query";
 
 const blogPosts = [
   {
@@ -123,8 +124,198 @@ const popularTags = [
 ];
 
 export default function Blog() {
-  const featuredPosts = blogPosts.filter(post => post.featured);
-  const recentPosts = blogPosts.slice(0, 6);
+  const params = useParams();
+  const { slug } = params;
+
+  // Fetch posts from API
+  const { data: posts = [], isLoading: postsLoading } = useQuery({
+    queryKey: ['/api/posts'],
+    staleTime: 5 * 60 * 1000 // 5 minutes
+  });
+
+  // If slug is provided, show individual post
+  if (slug) {
+    const { data: post, isLoading: postLoading } = useQuery({
+      queryKey: [`/api/posts/${slug}`],
+      staleTime: 10 * 60 * 1000 // 10 minutes
+    });
+
+    if (postLoading) {
+      return (
+        <Layout>
+          <div className="container mx-auto px-4 py-20">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p>Maqola yuklanmoqda...</p>
+            </div>
+          </div>
+        </Layout>
+      );
+    }
+
+    if (!post) {
+      return (
+        <Layout>
+          <div className="container mx-auto px-4 py-20 text-center">
+            <h1 className="text-4xl font-bold mb-4">404</h1>
+            <p className="text-xl text-muted-foreground mb-8">Maqola topilmadi</p>
+            <Link href="/blog">
+              <Button>Blog sahifasiga qaytish</Button>
+            </Link>
+          </div>
+        </Layout>
+      );
+    }
+
+    return (
+      <>
+        <Helmet>
+          <title>{post.seoTitle || post.title} | Akram Farmonov</title>
+          <meta name="description" content={post.seoDescription || post.excerpt} />
+          <meta name="keywords" content={post.tags?.join(', ')} />
+          <link rel="canonical" href={`https://akramfarmonov.uz/blog/${post.slug}`} />
+          
+          <meta property="og:title" content={post.title} />
+          <meta property="og:description" content={post.excerpt} />
+          <meta property="og:type" content="article" />
+          <meta property="og:url" content={`https://akramfarmonov.uz/blog/${post.slug}`} />
+          {post.featuredImage && <meta property="og:image" content={post.featuredImage} />}
+          
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BlogPosting",
+              "headline": post.title,
+              "description": post.excerpt,
+              "image": post.featuredImage,
+              "author": {
+                "@type": "Person",
+                "name": post.author
+              },
+              "publisher": {
+                "@type": "Person",
+                "name": "Akram Farmonov"
+              },
+              "datePublished": post.publishedAt || post.createdAt,
+              "dateModified": post.updatedAt,
+              "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": `https://akramfarmonov.uz/blog/${post.slug}`
+              }
+            })}
+          </script>
+        </Helmet>
+        
+        <Layout>
+          <article className="py-20 lg:py-24">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="max-w-4xl mx-auto">
+                {/* Article Header */}
+                <header className="mb-12 text-center">
+                  <div className="mb-4">
+                    <Badge variant="secondary" className="mb-4">
+                      {post.category}
+                    </Badge>
+                  </div>
+                  <h1 className="text-3xl lg:text-5xl font-bold mb-6 text-gradient">
+                    {post.title}
+                  </h1>
+                  <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+                    {post.excerpt}
+                  </p>
+                  
+                  <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>{new Date(post.publishedAt || post.createdAt).toLocaleDateString('uz-UZ')}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4" />
+                      <span>{post.readTime || 5} daqiqa o'qish</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span>Muallif: {post.author}</span>
+                    </div>
+                  </div>
+                </header>
+
+                {/* Article Content */}
+                <div className="prose prose-lg max-w-none dark:prose-invert">
+                  <div className="whitespace-pre-line leading-relaxed">
+                    {post.content.split('\n').map((line, index) => {
+                      // Handle headers
+                      if (line.startsWith('# ')) {
+                        return <h1 key={index} className="text-3xl font-bold mt-8 mb-4">{line.substring(2)}</h1>;
+                      }
+                      if (line.startsWith('## ')) {
+                        return <h2 key={index} className="text-2xl font-semibold mt-6 mb-3">{line.substring(3)}</h2>;
+                      }
+                      if (line.startsWith('### ')) {
+                        return <h3 key={index} className="text-xl font-semibold mt-4 mb-2">{line.substring(4)}</h3>;
+                      }
+                      // Handle code blocks
+                      if (line.startsWith('```')) {
+                        return <div key={index} className="bg-muted p-4 rounded-md font-mono text-sm my-4"></div>;
+                      }
+                      // Handle lists
+                      if (line.startsWith('- ')) {
+                        return <li key={index} className="ml-4 mb-1">{line.substring(2)}</li>;
+                      }
+                      // Handle bold text **text**
+                      if (line.includes('**')) {
+                        const parts = line.split('**');
+                        return (
+                          <p key={index} className="mb-3">
+                            {parts.map((part, i) => 
+                              i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+                            )}
+                          </p>
+                        );
+                      }
+                      // Handle horizontal rules
+                      if (line === '---') {
+                        return <hr key={index} className="my-8" />;
+                      }
+                      // Regular paragraphs
+                      if (line.trim()) {
+                        return <p key={index} className="mb-3 leading-7">{line}</p>;
+                      }
+                      return <br key={index} />;
+                    })}
+                  </div>
+                </div>
+
+                {/* Article Footer */}
+                <footer className="mt-16 pt-8 border-t">
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {post.tags?.map((tag: string) => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        <Tag className="h-3 w-3 mr-1" />
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  
+                  <div className="text-center">
+                    <Link href="/blog">
+                      <Button variant="outline">
+                        <ArrowRight className="h-4 w-4 mr-2 rotate-180" />
+                        Barcha maqolalar
+                      </Button>
+                    </Link>
+                  </div>
+                </footer>
+              </div>
+            </div>
+          </article>
+        </Layout>
+      </>
+    );
+  }
+
+  // Show blog listing page
+  const featuredPosts = posts.filter((post: any) => post.featured).slice(0, 3);
+  const recentPosts = posts.slice(0, 6);
 
   return (
     <>

@@ -148,6 +148,141 @@ export class MemStorage implements IStorage {
       };
       this.services.set(newService.id, newService);
     });
+
+    // Add sample blog post
+    const samplePost: InsertPost = {
+      title: "Telegram Bot Yaratish: Biznesingiz Uchun To'liq Qo'llanma",
+      slug: "telegram-bot-yaratish-biznesingiz-uchun-toliq-qollanma",
+      excerpt: "Noldan boshlab professional Telegram bot yaratish, to'lov tizimi qo'shish va mijozlar bilan ishlash haqida amaliy qo'llanma.",
+      content: `# Telegram Bot Yaratish: Biznesingiz Uchun To'liq Qo'llanma
+
+Telegram botlari zamonaviy biznes uchun ajralmas qismga aylandi. Ushbu qo'llanmada siz noldan boshlab professional bot yaratishni o'rganasiz.
+
+## Bot Yaratishning Asosiy Bosqichlari
+
+### 1. BotFather orqali bot yaratish
+- Telegram'da @BotFather ni toping
+- /newbot buyrug'ini yuboring  
+- Bot nomini va username ni belgilang
+- API tokenni saqlang
+
+### 2. Dasturlash tili tanlash
+Eng mashhur tanlovlar:
+- **Node.js** - JavaScript/TypeScript
+- **Python** - aiogram, python-telegram-bot
+- **PHP** - Telegram Bot SDK
+
+### 3. Asosiy funksiyalar
+
+#### Buyruqlar va javoblar
+\`\`\`javascript
+bot.command('start', (ctx) => {
+  ctx.reply('Xush kelibsiz! Bizning botimizga marhamat!');
+});
+\`\`\`
+
+#### Inline klaviatura
+\`\`\`javascript
+const keyboard = {
+  reply_markup: {
+    inline_keyboard: [
+      [{ text: 'Mahsulotlar', callback_data: 'products' }],
+      [{ text: 'Aloqa', callback_data: 'contact' }]
+    ]
+  }
+};
+\`\`\`
+
+## To'lov Tizimi Integratsiyasi
+
+### Click va Payme
+- Merchant hisobini oching
+- API kalitlarini oling
+- Webhook URLlarini sozlang
+
+### Xavfsizlik
+- SSL sertifikatini o'rnating
+- Ma'lumotlarni shifrlang
+- Tranzaksiya loglarini yuritng
+
+## Mijozlar Bazasi
+
+### Ma'lumotlar Saqlash
+- SQLite yoki PostgreSQL
+- Redis (kesh uchun)
+- Fayllar tizimi
+
+### GDPR va Maxfiylik
+- Foydalanuvchi roziligini oling
+- Ma'lumotlarni o'chirish imkoniyati
+- Shaffof maxfiylik siyosati
+
+## Bot Monitoring va Analytics
+
+### Asosiy Metrikalar
+- Faol foydalanuvchilar soni
+- Buyruqlar statistikasi
+- Konversiya darajasi
+- Xato holatlari
+
+### Monitoring Tools
+- Grafana + Prometheus
+- ELK Stack
+- Custom dashboard
+
+## Biznes Uchun Foydali Funksiyalar
+
+### 1. Avtomatik Buyurtma
+- Mahsulot katalogi
+- Savat funksiyasi
+- To'lov jarayoni
+- Yetkazib berish
+
+### 2. CRM Integratsiya
+- Mijozlar ma'lumotlari
+- Buyurtmalar tarixi
+- Marketing kampaniyalari
+
+### 3. Xodimlar Uchun Admin Panel
+- Buyurtmalar boshqaruvi
+- Statistika ko'rish
+- Mijozlar bilan muloqot
+
+## Xulosa
+
+Telegram bot - bu biznesingizni avtomatlashtirish va mijozlar bilan samarali muloqot qurish uchun kuchli vosita. To'g'ri strategiya va texnik yechimlar bilan siz o'z biznesingizni keyingi bosqichga olib chiqishingiz mumkin.
+
+---
+*Bu maqola Akram Farmonov tomonidan tayyorlandi. Professional Telegram bot yaratish xizmatlari uchun biz bilan bog'laning.*`,
+      category: "Telegram",
+      tags: ["telegram", "bot", "development", "business"],
+      author: "Akram Farmonov",
+      published: true,
+      publishedAt: new Date("2024-01-15"),
+      readTime: 8,
+      seoTitle: "Telegram Bot Yaratish - Professional Qo'llanma",
+      seoDescription: "Biznes uchun Telegram bot yaratish bo'yicha to'liq qo'llanma. API, to'lov tizimi, CRM integratsiya."
+    };
+
+    const newPost: Post = {
+      ...samplePost,
+      id: this.currentId++,
+      author: samplePost.author || "Akram Farmonov",
+      views: 156,
+      likes: 23,
+      createdAt: new Date("2024-01-15"),
+      updatedAt: new Date("2024-01-15"),
+      excerpt: samplePost.excerpt || null,
+      tags: samplePost.tags || null,
+      featuredImage: samplePost.featuredImage || null,
+      published: samplePost.published || null,
+      publishedAt: samplePost.publishedAt || null,
+      readTime: samplePost.readTime || null,
+      seoTitle: samplePost.seoTitle || null,
+      seoDescription: samplePost.seoDescription || null
+    };
+    this.posts.set(newPost.id, newPost);
+    console.log("Sample post created:", newPost.title);
   }
 
   // User operations
@@ -244,6 +379,7 @@ export class MemStorage implements IStorage {
     const post = this.posts.get(id);
     if (post) {
       post.views = (post.views || 0) + 1;
+      post.updatedAt = new Date();
       this.posts.set(id, post);
     }
   }
