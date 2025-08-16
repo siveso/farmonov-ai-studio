@@ -293,7 +293,7 @@ export default function Aloqa() {
                   </CardHeader>
                   <CardContent className="space-y-4 pt-0">
                     <a 
-                      href="mailto:akram@farmonov.uz"
+                      href="mailto:akramfarmonov1@gmail.com"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
@@ -301,12 +301,12 @@ export default function Aloqa() {
                       </div>
                       <div>
                         <div className="font-medium text-foreground">Email</div>
-                        <div className="text-sm text-muted-foreground">akram@farmonov.uz</div>
+                        <div className="text-sm text-muted-foreground">akramfarmonov1@gmail.com</div>
                       </div>
                     </a>
 
                     <a 
-                      href="tel:+998901234567"
+                      href="tel:+998996448444"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
@@ -314,12 +314,12 @@ export default function Aloqa() {
                       </div>
                       <div>
                         <div className="font-medium text-foreground">Telefon</div>
-                        <div className="text-sm text-muted-foreground">+998 90 123 45 67</div>
+                        <div className="text-sm text-muted-foreground">+998 99 644 84 44</div>
                       </div>
                     </a>
 
                     <a 
-                      href="https://t.me/akramfarmonov"
+                      href="https://t.me/Akramjon1984"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
@@ -329,7 +329,7 @@ export default function Aloqa() {
                       </div>
                       <div>
                         <div className="font-medium text-foreground">Telegram</div>
-                        <div className="text-sm text-muted-foreground">@akramfarmonov</div>
+                        <div className="text-sm text-muted-foreground">@Akramjon1984</div>
                       </div>
                     </a>
                   </CardContent>

@@ -455,7 +455,7 @@ export default function Blog() {
                         </div>
                         
                         <CardTitle className="text-xl leading-tight group-hover:text-primary transition-colors">
-                          <Link to={`/blog/${post.id}`}>
+                          <Link to={`/blog/${post.slug || post.id}`}>
                             {post.title}
                           </Link>
                         </CardTitle>
@@ -487,7 +487,7 @@ export default function Blog() {
                           </div>
                         </div>
 
-                        <Link to={`/blog/${post.id}`}>
+                        <Link to={`/blog/${post.slug || post.id}`}>
                           <Button variant="outline" className="w-full">
                             O'qish
                             <ArrowRight className="ml-2 h-4 w-4" />
@@ -599,7 +599,7 @@ export default function Blog() {
                           </div>
                           
                           <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">
-                            <Link to={`/blog/${post.id}`}>
+                            <Link to={`/blog/${post.slug || post.id}`}>
                               {post.title}
                             </Link>
                           </CardTitle>
@@ -626,7 +626,7 @@ export default function Blog() {
                               <span>{post.views} ko'rish</span>
                               <span>{post.likes} ♥</span>
                             </div>
-                            <Link to={`/blog/${post.id}`}>
+                            <Link to={`/blog/${post.slug || post.id}`}>
                               <Button variant="ghost" size="sm">
                                 O'qish
                                 <ArrowRight className="ml-1 h-3 w-3" />

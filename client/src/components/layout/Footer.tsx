@@ -85,27 +85,27 @@ export default function Footer() {
             <h3 className="font-semibold text-foreground">Bog'lanish</h3>
             <div className="space-y-3">
               <a
-                href="mailto:akram@farmonov.uz"
+                href="mailto:akramfarmonov1@gmail.com"
                 className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 <Mail className="h-4 w-4" />
-                <span>akram@farmonov.uz</span>
+                <span>akramfarmonov1@gmail.com</span>
               </a>
               <a
-                href="tel:+998901234567"
+                href="tel:+998996448444"
                 className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 <Phone className="h-4 w-4" />
                 <span>+998 99 644 84 44</span>
               </a>
               <a
-                href="https://t.me/akramfarmonov"
+                href="https://t.me/Akramjon1984"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-muted-foreground hover:text-primary transition-colors text-sm"
               >
                 <MessageCircle className="h-4 w-4" />
-                <span>@akramfarmonov</span>
+                <span>@Akramjon1984</span>
               </a>
             </div>
 
