@@ -249,7 +249,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Password required" });
       }
 
-      const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+      const adminPassword = process.env.ADMIN_PASSWORD || "Gisobot201415*";
       const isValid = await bcrypt.compare(password, adminPassword) || password === adminPassword;
       
       if (!isValid) {
@@ -273,7 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Parol talab qilinadi" });
       }
 
-      const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+      const adminPassword = process.env.ADMIN_PASSWORD || "Gisobot201415*";
       const isValid = await bcrypt.compare(password, adminPassword) || password === adminPassword;
       
       if (!isValid) {
