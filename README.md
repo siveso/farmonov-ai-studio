@@ -80,7 +80,7 @@ Bu Akram Farmonov'ning professional portfolio sayti - O'zbekiston bozoriga mo'lj
 ### ⚠️ Sozlash kerak bo'lgan qismlar:
 - [x] **Google Gemini API Key** - Blog generatsiya uchun ✅
 - [x] **Telegram Bot Token** - Xabarnomalar uchun ✅  
-- [x] **Admin Password** - Yangilandi: `Gisobot201415*` ✅
+- [x] **Admin Password** - Yangilandi: 
 - [ ] **PostgreSQL** - Production database (Render.com da sozlash)
 - [ ] **Domain** - akramfarmonov.uz domainiga ulash
 
