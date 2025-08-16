@@ -89,6 +89,7 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [isPostDialogOpen, setIsPostDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const { toast } = useToast();
 
   // Check authentication on component mount
@@ -174,10 +175,46 @@ const Admin = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/posts'] });
       setIsPostDialogOpen(false);
+      setIsEditMode(false);
+      setSelectedPost(null);
       postForm.reset();
       toast({
         title: "Muvaffaqiyat",
         description: "Maqola yaratildi"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Xatolik",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Update post mutation
+  const updatePostMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof postSchema>) => {
+      if (!selectedPost) throw new Error("Maqola tanlanmagan");
+      const postData = {
+        ...data,
+        tags: data.tags ? data.tags.split(',').map(tag => tag.trim()) : [],
+        slug: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      };
+      return await apiRequest(`/api/admin/posts/${selectedPost.id}`, {
+        method: "PUT",
+        body: JSON.stringify(postData)
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/posts'] });
+      setIsPostDialogOpen(false);
+      setIsEditMode(false);
+      setSelectedPost(null);
+      postForm.reset();
+      toast({
+        title: "Muvaffaqiyat",
+        description: "Maqola yangilandi"
       });
     },
     onError: (error: Error) => {
@@ -265,7 +302,42 @@ const Admin = () => {
   };
 
   const handleCreatePost = (values: z.infer<typeof postSchema>) => {
-    createPostMutation.mutate(values);
+    if (isEditMode) {
+      updatePostMutation.mutate(values);
+    } else {
+      createPostMutation.mutate(values);
+    }
+  };
+
+  const handleEditPost = (post: Post) => {
+    setSelectedPost(post);
+    setIsEditMode(true);
+    
+    // Populate form with existing post data
+    postForm.reset({
+      title: post.title,
+      content: post.content,
+      excerpt: post.excerpt || '',
+      category: post.category,
+      tags: Array.isArray(post.tags) ? post.tags.join(', ') : '',
+      published: post.published
+    });
+    
+    setIsPostDialogOpen(true);
+  };
+
+  const handleNewPost = () => {
+    setSelectedPost(null);
+    setIsEditMode(false);
+    postForm.reset({
+      title: "",
+      content: "",
+      excerpt: "",
+      category: "",
+      tags: "",
+      published: false
+    });
+    setIsPostDialogOpen(true);
   };
 
   const handleGeneratePosts = () => {
@@ -485,18 +557,27 @@ const Admin = () => {
                   <Bot className="w-4 h-4 mr-2" />
                   AI Maqola
                 </Button>
-                <Dialog open={isPostDialogOpen} onOpenChange={setIsPostDialogOpen}>
+                <Dialog open={isPostDialogOpen} onOpenChange={(open) => {
+                  setIsPostDialogOpen(open);
+                  if (!open) {
+                    setIsEditMode(false);
+                    setSelectedPost(null);
+                    postForm.reset();
+                  }
+                }}>
                   <DialogTrigger asChild>
-                    <Button>
+                    <Button onClick={handleNewPost}>
                       <Plus className="w-4 h-4 mr-2" />
                       Yangi Maqola
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
-                      <DialogTitle>Yangi Maqola Yaratish</DialogTitle>
+                      <DialogTitle>
+                        {isEditMode ? "Maqolani Tahrirlash" : "Yangi Maqola Yaratish"}
+                      </DialogTitle>
                       <DialogDescription>
-                        Blog uchun yangi maqola yarating
+                        {isEditMode ? "Maqola ma'lumotlarini o'zgartiring" : "Blog uchun yangi maqola yarating"}
                       </DialogDescription>
                     </DialogHeader>
                     <Form {...postForm}>
@@ -611,16 +692,22 @@ const Admin = () => {
                           <Button 
                             type="button" 
                             variant="outline"
-                            onClick={() => setIsPostDialogOpen(false)}
+                            onClick={() => {
+                              setIsPostDialogOpen(false);
+                              setIsEditMode(false);
+                              setSelectedPost(null);
+                              postForm.reset();
+                            }}
                           >
                             Bekor qilish
                           </Button>
                           <Button 
                             type="submit"
-                            disabled={createPostMutation.isPending}
+                            disabled={createPostMutation.isPending || updatePostMutation.isPending}
                           >
-                            {createPostMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Yaratish
+                            {(createPostMutation.isPending || updatePostMutation.isPending) && 
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                            {isEditMode ? "Yangilash" : "Yaratish"}
                           </Button>
                         </div>
                       </form>
@@ -665,7 +752,12 @@ const Admin = () => {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <Button variant="ghost" size="sm">
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleEditPost(post)}
+                            data-testid={`button-edit-post-${post.id}`}
+                          >
                             <Edit className="w-4 h-4" />
                           </Button>
                           <Button 
